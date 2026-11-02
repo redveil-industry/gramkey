@@ -1,13 +1,29 @@
 # Gramkey
 
-iOS custom keyboard: Apple-style QWERTY plus a scrollable, user-editable shortcut bar (Copy, Paste, Esc, Tab, Shift+Tab, arrows, ⌫/Del, sticky Ctrl, Ctrl+C/D/Z/L/R/A/E/W/U, and any text/escape sequence you define).
+**An iOS keyboard for people who live in terminals and text.** It looks and types like Apple's keyboard, and adds a shortcut bar you can customise (Esc, Tab, arrows, Ctrl+anything, your own snippets), a one-tap Terminal mode for SSH apps, Apple-style popout edit keys, and smart on-device autocorrect that learns your vocabulary. It doesn't use the network.
+
+| Autocorrect + key callout | Hold space: edit tray | Light mode |
+|:---:|:---:|:---:|
+| <img src="docs/screenshots/autocorrect-callout.png" width="260" alt="Dark keyboard with the autocorrect strip showing recieve → receive and a popped-out g key"> | <img src="docs/screenshots/hold-space-tray.png" width="260" alt="Hold-space popout tray with Select All, Copy, Cut, Paste; Copy highlighted"> | <img src="docs/screenshots/light.png" width="260" alt="Light-mode keyboard with shortcut bar and suggestion strip"> |
+
+<sub>Simulator captures of the keyboard's SwiftUI view in the app's preview mode (`-previewKeyboard`). On a device it appears as your system keyboard.</sub>
+
+### Features
+- **Shortcut bar:** Copy, Paste, Esc, Tab, Shift+Tab, arrows, ⌫/Del, sticky **Ctrl**, Ctrl+C/D/Z/L/R/A/E/W/U, plus any text or escape sequence (`\e[A`, `^C`, `git status\n`). Tap **+** to add a chip without leaving the keyboard.
+- **Terminal mode (`>_`):** Ctrl, Esc and arrows send raw control bytes and ANSI codes for SSH apps. In text mode they become editing commands: Ctrl+C/X/V copy, cut and paste; Ctrl+A selects all; Ctrl+W/U/K delete.
+- **Hold space** for a popout tray: Select All · Copy · Cut · Paste. Slide to choose and release to run it.
+- **Autocorrect on space**, ranked by keyboard-aware typo cost plus word frequency and your history. Backspace undoes a correction, iOS text replacements expand, and code-like text (`foo_bar`, `-flag`, `~/dir`) is left alone.
+- **Predictions** from the word pairs you actually use, plus haptics and Apple-style key callouts.
+- **Private by design:** no networking, no analytics, no keystroke logging. Learning is opt-out and can be cleared.
 
 ```
-App/        container app: setup steps, Terminal-mode toggle, shortcut editor
-Keyboard/   UIInputViewController + SwiftUI keyboard
-Shared/     Shortcut model, escape decoding, up/down cursor math, App Group store
-Tests/      unit tests for the pure logic
-project.yml XcodeGen spec (xcodeproj is generated, not hand-edited)
+App/        container app: setup, Terminal mode, haptics/autocorrect/learning toggles, shortcut editor, AppIcon
+Keyboard/   UIInputViewController + SwiftUI keyboard (keys, callouts, popout tray, shortcut and suggestion bars)
+Shared/     shortcut model + escape decoding, cursor math, autocorrect engine, suggestions, App Group store
+Icon/       app icon layer SVGs, generator, Icon Composer setup card
+Tests/      unit tests for decoding, navigation, typo cost, autocorrect, learning, panel geometry
+UITests/    screenshot and gesture tests
+project.yml XcodeGen spec (the .xcodeproj is generated from it)
 ```
 
 ## Hold space: popout panel
