@@ -11,10 +11,15 @@
 		095553F88971FEF48EB79E42 /* Shortcut.swift in Sources */ = {isa = PBXBuildFile; fileRef = 777526E13A99293A48988A39 /* Shortcut.swift */; };
 		0B09F27C2FD0DE2A1F53BDA6 /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37DAC70882EEE10F2D748A8C /* KeyboardView.swift */; };
 		18BE1A84D8C2C0E162F4724D /* KeyboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 37DAC70882EEE10F2D748A8C /* KeyboardView.swift */; };
+		272D4F644A9AD938BD9B5674 /* Autocorrect.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB77A3A8C55B13D0C260E20A /* Autocorrect.swift */; };
 		2C1C3F9382519A363D080F65 /* GramkeyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 55BD5CB07D5ADFEFD6975A65 /* GramkeyTests.swift */; };
 		7674B25E40DABD46EE65418B /* Shortcut.swift in Sources */ = {isa = PBXBuildFile; fileRef = 777526E13A99293A48988A39 /* Shortcut.swift */; };
+		7D78A6791C168AFE728E4F71 /* Suggestions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF8DC0F58828FF817A117FA /* Suggestions.swift */; };
 		A67D53DD55505C14872FED9D /* GramkeyKeyboard.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 518C075417327A0BB09B10ED /* GramkeyKeyboard.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+		B79F5955893A4C0DD70CE893 /* Autocorrect.swift in Sources */ = {isa = PBXBuildFile; fileRef = DB77A3A8C55B13D0C260E20A /* Autocorrect.swift */; };
 		BCB881312528A6557130C221 /* GramkeyApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0C445D92946AE52119B11D4F /* GramkeyApp.swift */; };
+		C62C6CEE2030C0BA1FA94CAF /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C1DC63FA8FCF1DE991AF658B /* Assets.xcassets */; };
+		D50E2BB84A0D549D6B44E75C /* Suggestions.swift in Sources */ = {isa = PBXBuildFile; fileRef = AFF8DC0F58828FF817A117FA /* Suggestions.swift */; };
 		EA2B98A4140E87E1F1F03DDE /* KeyboardScreenshotTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3595074CE7A1FC3E9B95AF3A /* KeyboardScreenshotTests.swift */; };
 /* End PBXBuildFile section */
 
@@ -59,17 +64,20 @@
 /* Begin PBXFileReference section */
 		07D7899E150F648CB8EA5A22 /* KeyboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardViewController.swift; sourceTree = "<group>"; };
 		0C445D92946AE52119B11D4F /* GramkeyApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GramkeyApp.swift; sourceTree = "<group>"; };
-		173567F5F3621F27165606BC /* GramkeyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GramkeyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		173567F5F3621F27165606BC /* GramkeyUITests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = GramkeyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		3595074CE7A1FC3E9B95AF3A /* KeyboardScreenshotTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardScreenshotTests.swift; sourceTree = "<group>"; };
 		37DAC70882EEE10F2D748A8C /* KeyboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardView.swift; sourceTree = "<group>"; };
 		3D9DA6CC97B6631995BEB0A1 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		407B0449D1D6E957F0E93182 /* GramkeyKeyboard.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = GramkeyKeyboard.entitlements; sourceTree = "<group>"; };
-		518C075417327A0BB09B10ED /* GramkeyKeyboard.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = GramkeyKeyboard.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		518C075417327A0BB09B10ED /* GramkeyKeyboard.appex */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = "wrapper.app-extension"; path = GramkeyKeyboard.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		55BD5CB07D5ADFEFD6975A65 /* GramkeyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GramkeyTests.swift; sourceTree = "<group>"; };
-		61C632B6F55EFDA17692FDC9 /* GramkeyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = GramkeyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		61C632B6F55EFDA17692FDC9 /* GramkeyTests.xctest */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.cfbundle; path = GramkeyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		777526E13A99293A48988A39 /* Shortcut.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Shortcut.swift; sourceTree = "<group>"; };
 		9013111189691BE556AD9726 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
-		C7C97341B7F9D6B5554FA1CA /* Gramkey.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Gramkey.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		AFF8DC0F58828FF817A117FA /* Suggestions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Suggestions.swift; sourceTree = "<group>"; };
+		C1DC63FA8FCF1DE991AF658B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		C7C97341B7F9D6B5554FA1CA /* Gramkey.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = Gramkey.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DB77A3A8C55B13D0C260E20A /* Autocorrect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Autocorrect.swift; sourceTree = "<group>"; };
 		F9C16D3571920B908D85D68F /* Gramkey.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Gramkey.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -108,7 +116,9 @@
 		55BE1125306682E60A2757CA /* Shared */ = {
 			isa = PBXGroup;
 			children = (
+				DB77A3A8C55B13D0C260E20A /* Autocorrect.swift */,
 				777526E13A99293A48988A39 /* Shortcut.swift */,
+				AFF8DC0F58828FF817A117FA /* Suggestions.swift */,
 			);
 			path = Shared;
 			sourceTree = "<group>";
@@ -124,6 +134,7 @@
 		B3E3AC720D9981088DB0E0FA /* App */ = {
 			isa = PBXGroup;
 			children = (
+				C1DC63FA8FCF1DE991AF658B /* Assets.xcassets */,
 				F9C16D3571920B908D85D68F /* Gramkey.entitlements */,
 				0C445D92946AE52119B11D4F /* GramkeyApp.swift */,
 				9013111189691BE556AD9726 /* Info.plist */,
@@ -186,6 +197,7 @@
 			buildConfigurationList = 3DDE50EC05360B2C6F6F815B /* Build configuration list for PBXNativeTarget "Gramkey" */;
 			buildPhases = (
 				FB66321A90B01BA84AD0A70D /* Sources */,
+				42A7294ABB932DC638DB8044 /* Resources */,
 				AC561EF81CC6D5717C94572E /* Embed Foundation Extensions */,
 			);
 			buildRules = (
@@ -224,21 +236,23 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = YES;
-				LastUpgradeCheck = 2720;
+				LastUpgradeCheck = 1430;
 				TargetAttributes = {
 					1F7F9A237D58C4C6407AC82A = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = S96G4A8FMK;
 						ProvisioningStyle = Automatic;
 						TestTargetID = 811E684A79467AFAF2DE2328;
 					};
 					8099E5D32B6DF1E21E25436E = {
-						DevelopmentTeam = "";
+						DevelopmentTeam = S96G4A8FMK;
 						ProvisioningStyle = Automatic;
 					};
 					811E684A79467AFAF2DE2328 = {
+						DevelopmentTeam = S96G4A8FMK;
 						ProvisioningStyle = Automatic;
 					};
 					B806CDFE50EEFE098486EFA0 = {
+						DevelopmentTeam = S96G4A8FMK;
 						ProvisioningStyle = Automatic;
 					};
 				};
@@ -265,6 +279,17 @@
 		};
 /* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
+		42A7294ABB932DC638DB8044 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				C62C6CEE2030C0BA1FA94CAF /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		0738C3DE2FBB72C0B519CED8 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -286,9 +311,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				272D4F644A9AD938BD9B5674 /* Autocorrect.swift in Sources */,
 				18BE1A84D8C2C0E162F4724D /* KeyboardView.swift in Sources */,
 				032E5DD5CB547425E9D60813 /* KeyboardViewController.swift in Sources */,
 				7674B25E40DABD46EE65418B /* Shortcut.swift in Sources */,
+				7D78A6791C168AFE728E4F71 /* Suggestions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -296,9 +323,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				B79F5955893A4C0DD70CE893 /* Autocorrect.swift in Sources */,
 				BCB881312528A6557130C221 /* GramkeyApp.swift in Sources */,
 				0B09F27C2FD0DE2A1F53BDA6 /* KeyboardView.swift in Sources */,
 				095553F88971FEF48EB79E42 /* Shortcut.swift in Sources */,
+				D50E2BB84A0D549D6B44E75C /* Suggestions.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -327,7 +356,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -361,10 +389,9 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S96G4A8FMK;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -379,7 +406,6 @@
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
 				SWIFT_VERSION = 5.0;
@@ -393,10 +419,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = App/Gramkey.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = S96G4A8FMK;
 				INFOPLIST_FILE = App/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Gramkey;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -411,7 +434,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Keyboard/GramkeyKeyboard.entitlements;
-				DEVELOPMENT_TEAM = S96G4A8FMK;
 				INFOPLIST_FILE = Keyboard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -428,7 +450,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
-				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -462,10 +483,9 @@
 				COPY_PHASE_STRIP = NO;
 				CURRENT_PROJECT_VERSION = 1;
 				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = S96G4A8FMK;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -487,7 +507,6 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SDKROOT = iphoneos;
-				STRING_CATALOG_GENERATE_SYMBOLS = YES;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -535,10 +554,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = App/Gramkey.entitlements;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				DEVELOPMENT_TEAM = S96G4A8FMK;
 				INFOPLIST_FILE = App/Info.plist;
-				INFOPLIST_KEY_CFBundleDisplayName = Gramkey;
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.utilities";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -553,7 +569,6 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_ENTITLEMENTS = Keyboard/GramkeyKeyboard.entitlements;
-				DEVELOPMENT_TEAM = S96G4A8FMK;
 				INFOPLIST_FILE = Keyboard/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

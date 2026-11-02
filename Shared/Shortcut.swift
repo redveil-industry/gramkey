@@ -142,6 +142,32 @@ enum Store {
         set { defaults.set(try? JSONEncoder().encode(newValue), forKey: "shortcuts") }
     }
 
+    /// Key-press haptics (default on). iOS only lets keyboards fire haptics with Full Access.
+    static var haptics: Bool {
+        get { !defaults.bool(forKey: "hapticsOff") }
+        set { defaults.set(!newValue, forKey: "hapticsOff") }
+    }
+
+    static var autocorrect: Bool {
+        get { !defaults.bool(forKey: "autocorrectOff") }
+        set { defaults.set(!newValue, forKey: "autocorrectOff") }
+    }
+
+    /// Personal word memory for autocorrect/predictions. Typing-derived, so it's opt-out and clearable.
+    static var learning: Bool {
+        get { !defaults.bool(forKey: "learningOff") }
+        set { defaults.set(!newValue, forKey: "learningOff") }
+    }
+
+    static var memory: WordEngine.Memory {
+        get {
+            guard let data = defaults.data(forKey: "wordMemory"),
+                  let m = try? JSONDecoder().decode(WordEngine.Memory.self, from: data) else { return .init() }
+            return m
+        }
+        set { defaults.set(try? JSONEncoder().encode(newValue), forKey: "wordMemory") }
+    }
+
     /// On: arrows/Del emit ANSI escape sequences (terminals). Off: move the text cursor.
     static var arrowsSendANSI: Bool {
         get { defaults.bool(forKey: "arrowsSendANSI") }

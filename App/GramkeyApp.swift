@@ -10,6 +10,10 @@ struct GramkeyApp: App {
 struct ContentView: View {
     @State private var shortcuts = Store.shortcuts
     @State private var ansi = Store.arrowsSendANSI
+    @State private var haptics = Store.haptics
+    @State private var autocorrect = Store.autocorrect
+    @State private var learning = Store.learning
+    @State private var learnedCount = Store.memory.words.count
     @State private var scratch = ""
     @FocusState private var tryFocused: Bool
     @Environment(\.scenePhase) private var scenePhase
@@ -42,6 +46,23 @@ struct ContentView: View {
                     Text("On (SSH / terminal apps): Ctrl, Esc, arrows and Del send raw control bytes and ANSI codes. Off (normal text): Ctrl+C/X/V copy/cut/paste, Ctrl+A selects all (then Copy/Cut/Delete/type), Ctrl+E jumps to line end, Ctrl+W/U/K delete word/to line start/to line end, Esc hides the keyboard. Also toggled by the >_ chip on the keyboard.")
                 }
 
+                Section {
+                    Toggle("Haptic feedback", isOn: $haptics)
+                } footer: {
+                    Text("A light tap on every key, like the system keyboard. iOS only allows keyboard haptics with Full Access.")
+                }
+
+                Section {
+                    Toggle("Auto-correction", isOn: $autocorrect)
+                    Toggle("Learn from my typing", isOn: $learning)
+                    Button("Clear learned words (\(learnedCount))", role: .destructive) {
+                        Store.memory = .init()
+                        learnedCount = 0
+                    }
+                } footer: {
+                    Text("Space applies the highlighted correction; backspace right after undoes it. Learning keeps the words you use (letters only, no numbers or symbols) and which words follow which, on this device only, to rank corrections and predict your next word. Saving it needs Full Access.")
+                }
+
                 Section("Shortcut bar") {
                     ForEach($shortcuts) { $s in
                         NavigationLink { ShortcutEditor(shortcut: $s) } label: {
@@ -67,6 +88,9 @@ struct ContentView: View {
             .toolbar { EditButton() }
             .onChange(of: shortcuts) { _, new in Store.shortcuts = new }
             .onChange(of: ansi) { _, new in Store.arrowsSendANSI = new }
+            .onChange(of: haptics) { _, new in Store.haptics = new }
+            .onChange(of: autocorrect) { _, new in Store.autocorrect = new }
+            .onChange(of: learning) { _, new in Store.learning = new }
             // The keyboard's "+" can add chips while this app is open (e.g. in "Try it"); reload so we don't overwrite them.
             .onChange(of: scenePhase) { _, phase in if phase == .active { shortcuts = Store.shortcuts } }
             .onReceive(NotificationCenter.default.publisher(for: UIResponder.keyboardDidHideNotification)) { _ in
@@ -87,10 +111,22 @@ struct KeyboardPreview: View {
 
     var body: some View {
         KeyboardView(state: state)
-            .frame(height: KeyboardView.totalHeight)
+            .frame(height: KeyboardView.height(suggestions: true))
             .padding(.bottom, 30)
             .background(scheme == .dark ? Color(white: 0.17) : Color(red: 0.82, green: 0.84, blue: 0.86))
-            .onAppear { state.isDark = scheme == .dark; state.needsGlobe = false }
+            .onAppear {
+                state.isDark = scheme == .dark
+                state.needsGlobe = false
+                state.suggestionsOn = true   // sample word so the strip shows real UITextChecker output
+                state.word = "recieve"
+            }
+            .task {
+                Suggestions.warmUp()   // lexicon loads lazily; query after it settles
+                try? await Task.sleep(for: .milliseconds(500))
+                let result = WordEngine().suggestions(for: "recieve", previous: nil)
+                state.correction = result.correction
+                state.suggestions = result.others
+            }
             .onChange(of: shortcuts, initial: true) { _, new in state.shortcuts = new }
     }
 }

@@ -10,10 +10,29 @@ final class KeyboardViewController: UIInputViewController {
     private var lastShiftTap = Date.distantPast
     private var lastSpace = Date.distantPast
     private var proxy: UITextDocumentProxy { textDocumentProxy }
+    private var heightConstraint: NSLayoutConstraint?
+    private let impact = UIImpactFeedbackGenerator(style: .light)
+    private var hapticsOn = true
+    private let engine = WordEngine()
+    private var autocorrectOn = true
+    private var learningOn = true
+    private var unsavedLearns = 0
+    /// Set right after space autocorrects, so an immediate backspace can undo it (Apple/Gboard behavior).
+    private var lastCorrection: (original: String, corrected: String)?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         state.send = { [weak self] in self?.handle($0) }
+        state.haptic = { [weak self] in self?.tick() }
+        Suggestions.warmUp()
+        if Store.learning { engine.memory = Store.memory }
+        requestSupplementaryLexicon { [weak self] lexicon in
+            // Text replacements ("omw" → "On my way!") expand on space; names are never "corrected".
+            for e in lexicon.entries {
+                if e.userInput == e.documentText { self?.engine.names.insert(e.userInput.lowercased()) }
+                else { self?.engine.replacements[e.userInput.lowercased()] = e.documentText }
+            }
+        }
 
         let host = UIHostingController(rootView: KeyboardView(state: state))
         host.view.backgroundColor = .clear
@@ -23,6 +42,7 @@ final class KeyboardViewController: UIInputViewController {
         host.view.translatesAutoresizingMaskIntoConstraints = false
         let height = view.heightAnchor.constraint(equalToConstant: KeyboardView.totalHeight)
         height.priority = UILayoutPriority(999)
+        heightConstraint = height
         NSLayoutConstraint.activate([
             host.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             host.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
@@ -37,7 +57,16 @@ final class KeyboardViewController: UIInputViewController {
         super.viewWillAppear(animated)
         state.shortcuts = Store.shortcuts   // pick up edits made in the container app
         state.terminal = Store.arrowsSendANSI
+        hapticsOn = Store.haptics
+        autocorrectOn = Store.autocorrect
+        learningOn = Store.learning
+        impact.prepare()
         syncWithHost()
+    }
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        saveMemory()
     }
 
     override func textDidChange(_ textInput: UITextInput?) {
@@ -57,12 +86,85 @@ final class KeyboardViewController: UIInputViewController {
         case .join: "join"
         default: nil
         }
+        let numeric: [UIKeyboardType] = [.numberPad, .phonePad, .decimalPad, .asciiCapableNumberPad]
+        state.suggestionsOn = !state.terminal && proxy.autocorrectionType != .no
+            && !numeric.contains(proxy.keyboardType ?? .default)
+        heightConstraint?.constant = KeyboardView.height(suggestions: state.suggestionsOn)
         autoCapitalize()
+        updateSuggestions()
+    }
+
+    /// Refreshes the strip and the pending correction, which is exactly what space will apply (shown highlighted).
+    private func updateSuggestions() {
+        guard state.suggestionsOn, state.draft == nil else {
+            state.word = ""
+            state.suggestions = []
+            state.correction = nil
+            return
+        }
+        let before = proxy.documentContextBeforeInput ?? ""
+        let word = Suggestions.currentWord(before: before)
+        let previous = Suggestions.previousWord(before: before)
+        state.word = word
+        if word.isEmpty {
+            state.correction = nil
+            state.suggestions = engine.predictions(after: previous, sentenceStart: Suggestions.isSentenceStart(before))
+            return
+        }
+        let result = engine.suggestions(for: word, previous: previous)
+        // Don't autocorrect fragments of code/paths/handles: "foo_bar", "-flag", "~/dir", "@user", "v2beta".
+        let boundary = before.dropLast(word.count).last
+        let plainWord = boundary == nil || boundary!.isWhitespace || "(\"“‘[".contains(boundary!)
+        let keyboard = proxy.keyboardType ?? .default
+        let autocorrectable = autocorrectOn && plainWord && ![.URL, .emailAddress, .webSearch].contains(keyboard)
+        state.correction = autocorrectable ? result.correction : nil
+        state.suggestions = (state.correction == nil ? result.correction.map { [$0] } ?? [] : []) + result.others
+    }
+
+    /// Replaces the word left of the cursor with the pending correction. Returns whether it did.
+    private func applyCorrection() -> Bool {
+        guard let fix = state.correction, !state.word.isEmpty, fix != state.word else { return false }
+        let before = proxy.documentContextBeforeInput ?? ""
+        let previous = Suggestions.previousWord(before: before)
+        for _ in 0..<state.word.count { proxy.deleteBackward() }
+        proxy.insertText(fix)
+        log.debug("autocorrect applied len=\(self.state.word.count)")
+        learn(fix, previous: previous)
+        return true
+    }
+
+    private func learn(_ word: String, previous: String?) {
+        guard learningOn, !word.isEmpty else { return }
+        engine.learn(word, previous: previous)
+        unsavedLearns += 1
+        if unsavedLearns >= 10 { saveMemory() }
+    }
+
+    private func saveMemory() {
+        guard learningOn, unsavedLearns > 0 else { return }
+        Store.memory = engine.memory   // App Group write; needs Full Access, otherwise memory lasts this session
+        unsavedLearns = 0
+    }
+
+    /// Light tap per key, like the system keyboard. iOS silently ignores this without Full Access.
+    private func tick() {
+        guard hapticsOn, hasFullAccess else { return }
+        impact.impactOccurred()
+        impact.prepare()
     }
 
     // MARK: - Events
 
     private func handle(_ event: KeyEvent) {
+        tick()
+        process(event)
+        updateSuggestions()
+    }
+
+    private func process(_ event: KeyEvent) {
+        let undoable = lastCorrection
+        lastCorrection = nil
+        if case .edit(let action) = event { return edit(action) }
         if state.draft != nil, editDraft(event) { return }
         if state.allSelected, consumeSelectAll(event) { return }
         switch event {
@@ -72,6 +174,8 @@ final class KeyboardViewController: UIInputViewController {
                 state.ctrl = false
                 send(ctl, label: "Ctrl+\(text.uppercased())")
             } else {
+                // Apple corrects before sentence punctuation too: "teh," → "the,"
+                if ".,!?;:".contains(s) { _ = applyCorrection() }
                 proxy.insertText(text)
             }
             if state.shift == .once { state.shift = .off }
@@ -79,7 +183,15 @@ final class KeyboardViewController: UIInputViewController {
             autoCapitalize()
 
         case .backspace:
-            proxy.deleteBackward()
+            if let undo = undoable, (proxy.documentContextBeforeInput ?? "").hasSuffix(undo.corrected + " ") {
+                // Backspace right after an autocorrect restores what you typed, and remembers it as a word.
+                for _ in 0..<(undo.corrected.count + 1) { proxy.deleteBackward() }
+                proxy.insertText(undo.original)
+                if learningOn { engine.reject(undo.original); unsavedLearns += 1 }
+                state.correction = nil
+            } else {
+                proxy.deleteBackward()
+            }
             autoCapitalize()
 
         case .space:
@@ -91,6 +203,13 @@ final class KeyboardViewController: UIInputViewController {
                 proxy.insertText(". ")
                 lastSpace = .distantPast
             } else {
+                let word = state.word
+                let previous = Suggestions.previousWord(before: before)
+                if applyCorrection(), let fix = state.correction {
+                    lastCorrection = (word, fix)
+                } else {
+                    learn(word, previous: previous)
+                }
                 proxy.insertText(" ")
                 lastSpace = Date()
             }
@@ -112,6 +231,19 @@ final class KeyboardViewController: UIInputViewController {
         case .globe:
             advanceToNextInputMode()
 
+        case .suggestion(let word):
+            // Replace the partial word left of the cursor, then add a space (Apple's behavior).
+            let before = proxy.documentContextBeforeInput ?? ""
+            let typed = Suggestions.currentWord(before: before)
+            if word == typed, state.correction != nil, learningOn { engine.reject(typed) }   // tapped "typed": keep it
+            for _ in 0..<typed.count { proxy.deleteBackward() }
+            proxy.insertText(word + " ")
+            learn(word, previous: Suggestions.previousWord(before: before))
+            autoCapitalize()
+
+        case .edit:
+            break   // handled before the switch
+
         case .shortcut(let s):
             log.debug("chip \(s.label, privacy: .public) kind=\(s.kind.rawValue, privacy: .public) terminal=\(self.state.terminal)")
             run(s.kind, label: s.label, payload: s.payload)
@@ -120,6 +252,7 @@ final class KeyboardViewController: UIInputViewController {
         case .toggleTerminal:
             state.terminal.toggle()
             Store.arrowsSendANSI = state.terminal
+            syncWithHost()   // suggestions hide in Terminal mode
             flash(state.terminal ? "Terminal mode: Ctrl/Esc/arrows send raw codes" : "Text mode: Ctrl keys edit text")
         }
     }
@@ -237,6 +370,23 @@ final class KeyboardViewController: UIInputViewController {
         state.draft = nil
         Store.shortcuts = state.shortcuts   // App Group writes need Full Access; without it the chip lasts this session only
         flash(hasFullAccess ? "Added \(label)" : "Added for now. Enable Full Access to keep it")
+        autoCapitalize()
+    }
+
+    /// Hold-space menu. Acts on the virtual select-all when armed, else on the host selection; always
+    /// text-editing semantics (never raw ^X), regardless of Terminal mode.
+    private func edit(_ action: EditAction) {
+        log.debug("edit menu \(action.rawValue, privacy: .public) allSelected=\(self.state.allSelected)")
+        switch action {
+        case .selectAll:
+            state.allSelected = true
+        case .copy:
+            if state.allSelected { _ = consumeSelectAll(.shortcut(Shortcut(label: "Copy", kind: .copy))) } else { run(.copy, label: "Copy") }
+        case .cut:
+            if state.allSelected { _ = consumeSelectAll(.shortcut(Shortcut(label: "Cut", kind: .text, payload: "^X"))) } else { editingCommand(0x18, label: "Cut") }
+        case .paste:
+            if state.allSelected { _ = consumeSelectAll(.shortcut(Shortcut(label: "Paste", kind: .paste))) } else { run(.paste, label: "Paste") }
+        }
         autoCapitalize()
     }
 

@@ -10,6 +10,17 @@ Tests/      unit tests for the pure logic
 project.yml XcodeGen spec (xcodeproj is generated, not hand-edited)
 ```
 
+## Hold space: popout panel
+Hold **space** (~0.5s) and a key tray pops up: **Select All · Copy · Cut · Paste**. Slide to highlight one (with a haptic tick), then release to run it. Releasing without sliding cancels. A tap still types a space; it fires on release. Select All arms the virtual select-all, and Copy/Cut/Paste then apply to the whole text. These items always edit text, even in Terminal mode.
+
+## Typing feel
+- **Key callouts:** letters pop out above your finger, like the system keyboard.
+- **Haptics:** a light tap per key. Needs Full Access (an iOS rule for keyboards). It can be turned off in the app.
+- **Autocorrect (on space and on . , ! ? ; :):** the strip shows `"typed"` · **correction** (highlighted: space applies it) · alternative. Backspace right after a correction restores what you typed and remembers it; tapping `"typed"` keeps it too. Text replacements from iOS Settings ("omw" → "On my way!") expand, and contact names are never changed. It won't touch fragments like `foo_bar`, `-flag`, `~/dir` or `@user`, or URL/email fields, and it's off in Terminal mode.
+- **How it ranks (`Shared/Autocorrect.swift`):** score = −typo cost + word prior. The typo cost is a QWERTY-aware Damerau–Levenshtein: neighbouring keys, swapped letters, missing double letters and apostrophes are cheap. The prior combines word frequency (rank among UITextChecker's frequency-ordered completions), a common-words boost, how often you use the word, and the word you typed before it. It only corrects on a clear win, with a stricter bar for words of 3 letters or fewer.
+- **Predictions:** after a space, the strip offers the words you usually type next (learned word pairs), falling back to common starters.
+- **Learning (opt-out, clearable in the app):** stores only plain words of 2–24 letters and word pairs, on this device in the App Group. No digits or symbols, so tokens and keys aren't kept. Saving needs Full Access.
+
 ## Quick-add from the keyboard
 Tap **+** at the end of the bar. Type a label, and optionally what it sends, then tap **Add** (or return). The keyboard keys type into the editor, not the app. If you leave *Sends* empty, `Ctrl+O` sends `^O`; any other label sends its own text. Saving needs Full Access; without it the chip lasts only until the keyboard reloads. Editing and deleting still happen in the app.
 
