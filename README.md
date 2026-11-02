@@ -64,3 +64,6 @@ SSH/terminal apps (Blink, Termius, a web terminal) forward these to the PTY. Ord
 
 ## Security posture
 Keyboards see every keystroke. This one has **no networking, no analytics, no logging**, and it persists only the shortcut config in the App Group. Full Access is requested only for `UIPasteboard`. Keep it that way: adding any network call to the extension changes the threat model.
+
+## License
+MIT, see [LICENSE](LICENSE).
